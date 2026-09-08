@@ -228,9 +228,11 @@
                 <div class="name">${deal.name}</div>
                 <div class="meta">${deal.card} · ${formatMoney(deal.amount)} · ${deal.note}</div>
                 <div class="meta">В производстве: ${(cards.find(card => card.sku === deal.card) || {}).production || 0} шт.</div>
-                <div class="actions">
-                  <button class="btn primary" onclick="moveDeal(${deal.id})">Следующий статус</button>
-                </div>
+                ${deal.stage !== 'Готово' ? `
+                  <div class="actions">
+                    <button class="btn primary" onclick="moveDeal(${deal.id})">Следующий статус</button>
+                  </div>
+                ` : ''}
               </div>
             `).join('') : '<div class="deal"><div class="meta">Пока пусто</div></div>'}
           </div>
