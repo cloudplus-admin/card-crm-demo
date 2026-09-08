@@ -227,6 +227,7 @@
               <div class="deal">
                 <div class="name">${deal.name}</div>
                 <div class="meta">${deal.card} · ${formatMoney(deal.amount)} · ${deal.note}</div>
+                <div class="meta">В производстве: ${(cards.find(card => card.sku === deal.card) || {}).production || 0} шт.</div>
                 <div class="actions">
                   <button class="btn primary" onclick="moveDeal(${deal.id})">Следующий статус</button>
                 </div>
@@ -264,6 +265,11 @@
         if (card.sku !== sku) return card;
         return { ...card, production: (card.production || 0) + 1, status: 'в производство' };
       });
+      deals = deals.map(deal =>
+        deal.card === sku && deal.stage !== 'Готово'
+          ? { ...deal, stage: 'Производство' }
+          : deal
+      );
       render();
     };
 
