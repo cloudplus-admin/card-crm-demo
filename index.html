@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CRM и таблица карточек</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #172033;
+      --card: rgba(255,255,255,0.06);
+      --text: #e5eefb;
+      --muted: #9fb0c7;
+      --accent: #f59e0b;
+      --accent-2: #22c55e;
+      --danger: #ef4444;
+      --line: rgba(255,255,255,0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Manrope, system-ui, sans-serif;
+      background: radial-gradient(circle at top, #1e293b, var(--bg) 58%);
+      color: var(--text);
+    }
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 28px 18px 40px; }
+    .hero {
+      background: linear-gradient(135deg, rgba(245,158,11,0.18), rgba(34,197,94,0.12));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.24);
+    }
+    .hero h1 { margin: 0 0 10px; font-size: clamp(28px, 4vw, 46px); }
+    .hero p { margin: 0; color: var(--muted); max-width: 760px; line-height: 1.55; }
+    .badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .badge { padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,0.08); border: 1px solid var(--line); color: #fff; font-size: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 18px 0; }
+    .metric {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      backdrop-filter: blur(10px);
+    }
+    .metric .label { color: var(--muted); font-size: 13px; }
+    .metric .value { font-size: 28px; font-weight: 800; margin-top: 8px; }
+    .layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 16px; margin-top: 18px; }
+    .panel {
+      background: rgba(15,23,42,0.74);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+    }
+    .panel h2 { margin: 0 0 14px; font-size: 20px; }
+    .sub { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
+    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 16px; }
+    th, td { padding: 12px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 14px; }
+    th { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    .pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; background: rgba(255,255,255,0.08); }
+    .pill.ok { background: rgba(34,197,94,0.18); }
+    .pill.warn { background: rgba(245,158,11,0.18); }
+    .pill.bad { background: rgba(239,68,68,0.18); }
+    .crm { display: grid; gap: 12px; }
+    .stage { background: rgba(255,255,255,0.05); border: 1px solid var(--line); border-radius: 18px; padding: 14px; }
+    .stage h3 { margin: 0 0 10px; font-size: 16px; }
+    .deal { padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,0.07); border: 1px solid var(--line); margin-bottom: 8px; }
+    .deal:last-child { margin-bottom: 0; }
+    .deal .name { font-weight: 700; }
+    .deal .meta { color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .btn {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn.primary { background: rgba(245,158,11,0.18); }
+    .note { margin-top: 16px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+    @media (max-width: 1020px) {
+      .grid, .layout { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 720px) {
+      .grid, .layout { grid-template-columns: 1fr; }
+      .wrap { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>CRM и таблица карточек</h1>
+      <p>Демо-версия под ТЗ: простая таблица по карточкам за 35 000 сум, воронка CRM, ручные остатки, статусы и контроль рисков. Без лишней сложности, чтобы быстро показать рабочий контур.</p>
+      <div class="badges">
+        <span class="badge">Таблица остатков</span>
+        <span class="badge">Простая CRM</span>
+        <span class="badge">Доставка с офиса</span>
+        <span class="badge">Ручной контроль</span>
+      </div>
+    </section>
+
+    <section class="grid" aria-label="метрики">
+      <div class="metric"><div class="label">Карточки</div><div class="value" id="cardsCount">0</div></div>
+      <div class="metric"><div class="label">Сделки</div><div class="value" id="dealsCount">0</div></div>
+      <div class="metric"><div class="label">В работе</div><div class="value" id="workCount">0</div></div>
+      <div class="metric"><div class="label">Оборот</div><div class="value" id="turnover">0</div></div>
+    </section>
+
+    <section class="layout">
+      <div class="panel">
+        <h2>Таблица карточек</h2>
+        <div class="sub">Простая таблица под ручное управление. Цена уже зафиксирована в демо: 35 000 сум за карточку.</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Артикул</th>
+              <th>Карточка</th>
+              <th>Цена</th>
+              <th>Офис</th>
+              <th>Склад</th>
+              <th>Статус</th>
+              <th>Действие</th>
+            </tr>
+          </thead>
+          <tbody id="cardsTable"></tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h2>Простая CRM</h2>
+        <div class="sub">Статусы сделок двигаются вручную. В демо показан базовый поток от заявки до готово, с доставкой только с офиса.</div>
+        <div class="crm" id="crmBoard"></div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:16px;">
+      <h2>Риски и контроль</h2>
+      <div class="note">
+        1. Если остаток в офисе стал 0, система помечает карточку как требующую проверки.<br>
+        2. Если склад и офис расходятся, сделка уходит в статус «требует сверки».<br>
+        3. Доставка и выдача идут только с офиса, склад в этом сценарии только для учета.<br>
+        4. Каждое изменение фиксируется с именем ответственного и временем.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let cards = [
+      { sku: 'CRD-001', name: 'Простая карточка A5', price: 35000, office: 12, warehouse: 48, status: 'готово' },
+      { sku: 'CRD-002', name: 'Карточка с ламинацией', price: 35000, office: 0, warehouse: 24, status: 'ждёт офис' },
+      { sku: 'CRD-003', name: 'Карточка премиум', price: 35000, office: 6, warehouse: 0, status: 'в производство' },
+      { sku: 'CRD-004', name: 'Карточка срочная', price: 35000, office: 2, warehouse: 11, status: 'в работе' }
+    ];
+
+    let deals = [
+      { id: 1, name: 'Исмаил', card: 'CRD-001', stage: 'Новая', amount: 105000, note: '3 карточки' },
+      { id: 2, name: 'Тагир', card: 'CRD-002', stage: 'Ожидает оплату', amount: 35000, note: '1 карточка' },
+      { id: 3, name: 'Амина', card: 'CRD-003', stage: 'Производство', amount: 70000, note: '2 карточки' },
+      { id: 4, name: 'Руководитель', card: 'CRD-004', stage: 'Готово', amount: 35000, note: '1 карточка' }
+    ];
+
+    const stageOrder = ['Новая', 'Ожидает оплату', 'Производство', 'Ждём со склада', 'Доставка', 'Готово'];
+
+    function formatMoney(value) {
+      return new Intl.NumberFormat('ru-RU').format(value) + ' сум';
+    }
+
+    function statusClass(status) {
+      if (status === 'готово' || status === 'Готово') return 'ok';
+      if (status.includes('ждёт') || status.includes('Ожидает')) return 'warn';
+      if (status.includes('производство')) return 'bad';
+      return '';
+    }
+
+    function nextStage(stage) {
+      const idx = stageOrder.indexOf(stage);
+      return idx >= 0 && idx < stageOrder.length - 1 ? stageOrder[idx + 1] : stage;
+    }
+
+    function persist() {
+      localStorage.setItem('card_crm_demo_deals', JSON.stringify(deals));
+      localStorage.setItem('card_crm_demo_cards', JSON.stringify(cards));
+    }
+
+    function render() {
+      document.getElementById('cardsTable').innerHTML = cards.map(card => `
+        <tr>
+          <td>${card.sku}</td>
+          <td>${card.name}</td>
+          <td>${formatMoney(card.price)}</td>
+          <td>${card.office}</td>
+          <td>${card.warehouse}</td>
+          <td><span class="pill ${statusClass(card.status)}">${card.status}</span></td>
+          <td><button class="btn" onclick="moveToOffice('${card.sku}')" ${card.warehouse === 0 ? 'disabled' : ''}>На офис +1</button></td>
+        </tr>
+      `).join('');
+
+      document.getElementById('crmBoard').innerHTML = stageOrder.map(stage => {
+        const items = deals.filter(deal => deal.stage === stage);
+        return `
+          <div class="stage">
+            <h3>${stage}</h3>
+            ${items.length ? items.map(deal => `
+              <div class="deal">
+                <div class="name">${deal.name}</div>
+                <div class="meta">${deal.card} · ${formatMoney(deal.amount)} · ${deal.note}</div>
+                <div class="actions">
+                  <button class="btn primary" onclick="moveDeal(${deal.id})">Следующий статус</button>
+                  <button class="btn" onclick="bumpAmount(${deal.id})">+5 000</button>
+                </div>
+              </div>
+            `).join('') : '<div class="deal"><div class="meta">Пока пусто</div></div>'}
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('cardsCount').textContent = cards.length;
+      document.getElementById('dealsCount').textContent = deals.length;
+      document.getElementById('workCount').textContent = deals.filter(deal => deal.stage !== 'Готово').length;
+      document.getElementById('turnover').textContent = formatMoney(deals.reduce((sum, deal) => sum + deal.amount, 0));
+      persist();
+    }
+
+    window.moveDeal = function(id) {
+      const deal = deals.find(item => item.id === id);
+      if (!deal) return;
+      deals = deals.map(item => item.id === id ? { ...item, stage: nextStage(item.stage) } : item);
+      render();
+    };
+
+    window.bumpAmount = function(id) {
+      const deal = deals.find(item => item.id === id);
+      if (!deal) return;
+      deals = deals.map(item => item.id === id ? { ...item, amount: item.amount + 5000 } : item);
+      render();
+    };
+
+    window.moveToOffice = function(sku) {
+      cards = cards.map(card => {
+        if (card.sku !== sku || card.warehouse === 0) return card;
+        const office = card.office + 1;
+        return { ...card, office, warehouse: card.warehouse - 1, status: office > 0 ? 'готово' : card.status };
+      });
+      render();
+    };
+
+    const savedDeals = localStorage.getItem('card_crm_demo_deals');
+    if (savedDeals) {
+      try { deals = JSON.parse(savedDeals); } catch (e) {}
+    }
+    const savedCards = localStorage.getItem('card_crm_demo_cards');
+    if (savedCards) {
+      try { cards = JSON.parse(savedCards); } catch (e) {}
+    }
+    render();
+  </script>
+</body>
+</html>
