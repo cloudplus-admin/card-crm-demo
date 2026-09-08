@@ -130,6 +130,7 @@
               <th>Цена</th>
               <th>Офис</th>
               <th>Склад</th>
+              <th>Производство</th>
               <th>Статус</th>
               <th>Действие</th>
             </tr>
@@ -157,10 +158,10 @@
 
   <script>
     let cards = [
-      { sku: 'CRD-001', name: 'Простая карточка A5', price: 35000, office: 12, warehouse: 48, status: 'готово' },
-      { sku: 'CRD-002', name: 'Карточка с ламинацией', price: 35000, office: 0, warehouse: 24, status: 'ждёт офис' },
-      { sku: 'CRD-003', name: 'Карточка премиум', price: 35000, office: 6, warehouse: 0, status: 'в производство' },
-      { sku: 'CRD-004', name: 'Карточка срочная', price: 35000, office: 2, warehouse: 11, status: 'в работе' }
+      { sku: 'CRD-001', name: 'Простая карточка A5', price: 35000, office: 12, warehouse: 48, production: 0, status: 'готово' },
+      { sku: 'CRD-002', name: 'Карточка с ламинацией', price: 35000, office: 0, warehouse: 24, production: 0, status: 'ждёт офис' },
+      { sku: 'CRD-003', name: 'Карточка премиум', price: 35000, office: 6, warehouse: 0, production: 2, status: 'в производство' },
+      { sku: 'CRD-004', name: 'Карточка срочная', price: 35000, office: 2, warehouse: 11, production: 0, status: 'в работе' }
     ];
 
     let deals = [
@@ -204,8 +205,12 @@
           <td>${formatMoney(card.price)}</td>
           <td>${card.office}</td>
           <td>${card.warehouse}</td>
+          <td>${card.production || 0}</td>
           <td><span class="pill ${statusClass(card.status)}">${card.status}</span></td>
-          <td><button class="btn" onclick="moveToOffice('${card.sku}')" ${card.warehouse === 0 ? 'disabled' : ''}>На офис +1</button></td>
+          <td>
+            <button class="btn" onclick="moveToOffice('${card.sku}')" ${card.warehouse === 0 ? 'disabled' : ''}>На офис +1</button>
+            <button class="btn" onclick="moveToProduction('${card.sku}')" ${card.warehouse === 0 ? 'disabled' : ''}>В производство +1</button>
+          </td>
         </tr>
       `).join('');
 
@@ -254,6 +259,14 @@
         if (card.sku !== sku || card.warehouse === 0) return card;
         const office = card.office + 1;
         return { ...card, office, warehouse: card.warehouse - 1, status: office > 0 ? 'готово' : card.status };
+      });
+      render();
+    };
+
+    window.moveToProduction = function(sku) {
+      cards = cards.map(card => {
+        if (card.sku !== sku || card.warehouse === 0) return card;
+        return { ...card, warehouse: card.warehouse - 1, production: (card.production || 0) + 1, status: 'в производство' };
       });
       render();
     };
