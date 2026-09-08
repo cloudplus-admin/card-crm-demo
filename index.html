@@ -106,6 +106,9 @@
         <span class="badge">Доставка с офиса</span>
         <span class="badge">Ручной контроль</span>
       </div>
+      <div class="actions" style="margin-top:16px;">
+        <button class="btn" onclick="resetDemo()">Сбросить демо-данные</button>
+      </div>
     </section>
 
     <section class="grid" aria-label="метрики">
@@ -166,6 +169,9 @@
       { id: 3, name: 'Амина', card: 'CRD-003', stage: 'Производство', amount: 70000, note: '2 карточки' },
       { id: 4, name: 'Руководитель', card: 'CRD-004', stage: 'Готово', amount: 35000, note: '1 карточка' }
     ];
+
+    const defaultCards = JSON.stringify(cards);
+    const defaultDeals = JSON.stringify(deals);
 
     const stageOrder = ['Новая', 'Ожидает оплату', 'Производство', 'Ждём со склада', 'Доставка', 'Готово'];
 
@@ -249,6 +255,14 @@
         const office = card.office + 1;
         return { ...card, office, warehouse: card.warehouse - 1, status: office > 0 ? 'готово' : card.status };
       });
+      render();
+    };
+
+    window.resetDemo = function() {
+      cards = JSON.parse(defaultCards);
+      deals = JSON.parse(defaultDeals);
+      localStorage.removeItem('card_crm_demo_deals');
+      localStorage.removeItem('card_crm_demo_cards');
       render();
     };
 
