@@ -85,6 +85,8 @@
       cursor: pointer;
     }
     .btn.primary { background: rgba(245,158,11,0.18); }
+    .btn.stock-action { min-width: 112px; }
+    .btn:disabled { cursor: not-allowed; opacity: .45; }
     .note { margin-top: 16px; color: var(--muted); font-size: 14px; line-height: 1.5; }
     @media (max-width: 1020px) {
       .grid, .layout { grid-template-columns: 1fr 1fr; }
@@ -208,8 +210,10 @@
           <td>${card.production || 0}</td>
           <td><span class="pill ${statusClass(card.status)}">${card.status}</span></td>
           <td>
-            <button class="btn" onclick="moveToOffice('${card.sku}')" ${card.warehouse === 0 ? 'disabled' : ''}>На офис +1</button>
-            <button class="btn" onclick="moveToProduction('${card.sku}')" ${card.warehouse === 0 ? 'disabled' : ''}>В производство +1</button>
+            <div class="actions" style="margin-top:0;">
+              <button class="btn stock-action" onclick="moveToOffice('${card.sku}')" ${card.warehouse === 0 ? 'disabled' : ''}>На офис +1</button>
+              <button class="btn stock-action" onclick="moveToProduction('${card.sku}')">В производство +1</button>
+            </div>
           </td>
         </tr>
       `).join('');
@@ -225,7 +229,6 @@
                 <div class="meta">${deal.card} · ${formatMoney(deal.amount)} · ${deal.note}</div>
                 <div class="actions">
                   <button class="btn primary" onclick="moveDeal(${deal.id})">Следующий статус</button>
-                  <button class="btn" onclick="bumpAmount(${deal.id})">+5 000</button>
                 </div>
               </div>
             `).join('') : '<div class="deal"><div class="meta">Пока пусто</div></div>'}
@@ -247,13 +250,6 @@
       render();
     };
 
-    window.bumpAmount = function(id) {
-      const deal = deals.find(item => item.id === id);
-      if (!deal) return;
-      deals = deals.map(item => item.id === id ? { ...item, amount: item.amount + 5000 } : item);
-      render();
-    };
-
     window.moveToOffice = function(sku) {
       cards = cards.map(card => {
         if (card.sku !== sku || card.warehouse === 0) return card;
@@ -265,8 +261,8 @@
 
     window.moveToProduction = function(sku) {
       cards = cards.map(card => {
-        if (card.sku !== sku || card.warehouse === 0) return card;
-        return { ...card, warehouse: card.warehouse - 1, production: (card.production || 0) + 1, status: 'в производство' };
+        if (card.sku !== sku) return card;
+        return { ...card, production: (card.production || 0) + 1, status: 'в производство' };
       });
       render();
     };
