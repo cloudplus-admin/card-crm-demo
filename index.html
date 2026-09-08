@@ -257,6 +257,7 @@
         const office = card.office + 1;
         return { ...card, office, warehouse: card.warehouse - 1, status: office > 0 ? 'готово' : card.status };
       });
+      persist();
       render();
     };
 
@@ -270,6 +271,7 @@
           ? { ...deal, stage: 'Производство' }
           : deal
       );
+      persist();
       render();
     };
 
